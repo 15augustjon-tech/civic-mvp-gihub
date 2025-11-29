@@ -34,6 +34,9 @@ import { VotingRecordChart } from '@/components/VotingRecordChart';
 import { FundingGroups } from '@/components/FundingGroups';
 import { CompanyConnections } from '@/components/CompanyConnections';
 import { BackgroundInfo } from '@/components/BackgroundInfo';
+import { FECFundraising } from '@/components/FECFundraising';
+import { BillsSponsored } from '@/components/BillsSponsored';
+import { FileText } from 'lucide-react';
 
 export default function PoliticianProfile() {
   const params = useParams();
@@ -421,12 +424,50 @@ export default function PoliticianProfile() {
             )}
           </motion.div>
 
-          {/* Top Donors - Spans 2 columns */}
+          {/* FEC Fundraising Stats */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.5 }}
+            transition={{ delay: 0.32, duration: 0.5 }}
+            className="rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                <DollarSign className="w-5 h-5 text-green-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Campaign Finance</h3>
+                <p className="text-xs text-[#6b6b7a]">FEC Fundraising Data</p>
+              </div>
+            </div>
+            <FECFundraising fecId={senator.fec_id} />
+          </motion.div>
+
+          {/* Bills Sponsored */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.34, duration: 0.5 }}
             className="lg:col-span-2 rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-indigo-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Bills Sponsored</h3>
+                <p className="text-xs text-[#6b6b7a]">Recent legislation</p>
+              </div>
+            </div>
+            <BillsSponsored bioguideId={senator.bioguideId} />
+          </motion.div>
+
+          {/* Top Donors */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.36, duration: 0.5 }}
+            className="rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center">

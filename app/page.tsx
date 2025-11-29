@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Shield, Activity, Eye, Loader2 } from 'lucide-react';
+import { AlertTriangle, Shield, Activity, Eye, Loader2, Trophy, Users, MapPin } from 'lucide-react';
+import Link from 'next/link';
 import { fetchSenators, getTotalStats, Senator } from '@/lib/data';
 import { PoliticianCard } from '@/components/PoliticianCard';
 import { SearchCommand } from '@/components/SearchCommand';
@@ -71,6 +72,9 @@ export default function Home() {
       case 'conflicts':
         result.sort((a, b) => b.conflicts.length - a.conflicts.length);
         break;
+      case 'years':
+        result.sort((a, b) => a.since - b.since); // Lower since = more years
+        break;
       case 'netWorth':
         result.sort((a, b) => {
           const aVal = parseFloat(a.netWorth.replace(/[^0-9.-]/g, '')) || 0;
@@ -131,9 +135,39 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex justify-center mb-12"
+            className="flex justify-center mb-8"
           >
             <SearchCommand />
+          </motion.div>
+
+          {/* Quick Navigation */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+            className="flex justify-center gap-3 mb-12"
+          >
+            <Link
+              href="/leaderboard"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 transition-colors text-sm font-medium"
+            >
+              <Trophy className="w-4 h-4" />
+              Leaderboard
+            </Link>
+            <Link
+              href="/compare"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 hover:bg-purple-500/20 transition-colors text-sm font-medium"
+            >
+              <Users className="w-4 h-4" />
+              Compare Senators
+            </Link>
+            <Link
+              href="/state/ca"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-colors text-sm font-medium"
+            >
+              <MapPin className="w-4 h-4" />
+              Find Your State
+            </Link>
           </motion.div>
 
           {/* Quick stats cards */}

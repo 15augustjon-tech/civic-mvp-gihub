@@ -12,7 +12,7 @@ interface FilterControlsProps {
 export interface FilterState {
   party: 'all' | 'R' | 'D' | 'I';
   hasConflicts: boolean | null;
-  sortBy: 'name' | 'trades' | 'netWorth' | 'conflicts';
+  sortBy: 'name' | 'trades' | 'netWorth' | 'conflicts' | 'years';
   state: string;
 }
 
@@ -142,6 +142,7 @@ export function FilterControls({ onFilterChange }: FilterControlsProps) {
               {[
                 { value: 'trades', label: 'Most Trades' },
                 { value: 'conflicts', label: 'Most Conflicts' },
+                { value: 'years', label: 'Years in Office' },
                 { value: 'netWorth', label: 'Net Worth' },
                 { value: 'name', label: 'Name' },
               ].map(({ value, label }) => (
