@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -18,8 +19,15 @@ import {
   Wallet,
   Link2,
   GraduationCap,
+  Loader2,
+  Twitter,
+  Facebook,
+  Youtube,
+  Phone,
+  Globe,
+  MapPin,
 } from 'lucide-react';
-import { getSenatorById } from '@/lib/data';
+import { fetchSenators, Senator } from '@/lib/data';
 import { cn, getPartyColor, getPartyBgClass, getPartyName } from '@/lib/utils';
 import { TradeTimeline } from '@/components/TradeTimeline';
 import { VotingRecordChart } from '@/components/VotingRecordChart';
@@ -29,7 +37,30 @@ import { BackgroundInfo } from '@/components/BackgroundInfo';
 
 export default function PoliticianProfile() {
   const params = useParams();
-  const senator = getSenatorById(params.id as string);
+  const [senator, setSenator] = useState<Senator | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSenators().then(senators => {
+      const found = senators.find(s =>
+        s.id === (params.id as string).toLowerCase() ||
+        s.bioguideId.toLowerCase() === (params.id as string).toLowerCase()
+      );
+      setSenator(found || null);
+      setLoading(false);
+    });
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#050508] bg-grid flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4" />
+          <p className="text-[#6b6b7a]">Loading dossier...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!senator) {
     return (
@@ -140,6 +171,69 @@ export default function PoliticianProfile() {
               {senator.bio && (
                 <p className="text-sm text-[#6b6b7a] max-w-2xl leading-relaxed">{senator.bio}</p>
               )}
+
+              {/* Contact & Social Links */}
+              <div className="flex flex-wrap items-center gap-3 mt-4">
+                {senator.website && (
+                  <a
+                    href={senator.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-sm text-[#6b6b7a] hover:text-white hover:border-blue-500/30 transition-colors"
+                  >
+                    <Globe className="w-4 h-4" />
+                    <span>Website</span>
+                  </a>
+                )}
+                {senator.phone && (
+                  <a
+                    href={`tel:${senator.phone}`}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-sm text-[#6b6b7a] hover:text-white hover:border-green-500/30 transition-colors"
+                  >
+                    <Phone className="w-4 h-4" />
+                    <span>{senator.phone}</span>
+                  </a>
+                )}
+                {senator.twitter && (
+                  <a
+                    href={`https://twitter.com/${senator.twitter}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-sm text-[#6b6b7a] hover:text-white hover:border-blue-400/30 transition-colors"
+                  >
+                    <Twitter className="w-4 h-4" />
+                    <span>@{senator.twitter}</span>
+                  </a>
+                )}
+                {senator.facebook && (
+                  <a
+                    href={`https://facebook.com/${senator.facebook}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-sm text-[#6b6b7a] hover:text-white hover:border-blue-600/30 transition-colors"
+                  >
+                    <Facebook className="w-4 h-4" />
+                    <span>Facebook</span>
+                  </a>
+                )}
+                {senator.youtube && (
+                  <a
+                    href={`https://youtube.com/${senator.youtube}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-sm text-[#6b6b7a] hover:text-white hover:border-red-500/30 transition-colors"
+                  >
+                    <Youtube className="w-4 h-4" />
+                    <span>YouTube</span>
+                  </a>
+                )}
+                {senator.office && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-sm text-[#6b6b7a]">
+                    <MapPin className="w-4 h-4" />
+                    <span className="max-w-[200px] truncate">{senator.office}</span>
+                  </div>
+                )}
+              </div>
 
               {/* Quick stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
@@ -302,19 +396,29 @@ export default function PoliticianProfile() {
                 <p className="text-xs text-[#6b6b7a]">{senator.committees.length} assignments</p>
               </div>
             </div>
-            <div className="space-y-2">
-              {senator.committees.map((committee, index) => (
-                <motion.div
-                  key={committee}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.35 + index * 0.05 }}
-                  className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:border-purple-500/30 transition-colors"
-                >
-                  <span className="text-sm text-white">{committee}</span>
-                </motion.div>
-              ))}
-            </div>
+            {senator.committees.length > 0 ? (
+              <div className="space-y-2">
+                {senator.committees.map((committee, index) => (
+                  <motion.div
+                    key={committee}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.35 + index * 0.05 }}
+                    className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:border-purple-500/30 transition-colors"
+                  >
+                    <span className="text-sm text-white">{committee}</span>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <div className="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-3">
+                  <Building2 className="w-6 h-6 text-blue-400" />
+                </div>
+                <p className="text-sm text-[#6b6b7a]">Committee data coming soon</p>
+                <p className="text-xs text-[#3d3d4a] mt-1">Connect Congress.gov API for assignments</p>
+              </div>
+            )}
           </motion.div>
 
           {/* Top Donors - Spans 2 columns */}
@@ -333,25 +437,35 @@ export default function PoliticianProfile() {
                 <p className="text-xs text-[#6b6b7a]">Campaign contributions</p>
               </div>
             </div>
-            <div className="space-y-3">
-              {senator.topDonors.map((donor, index) => (
-                <motion.div
-                  key={donor.name}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + index * 0.05 }}
-                  className="flex items-center justify-between p-4 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:border-green-500/30 transition-colors"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-white">{donor.name}</p>
-                    <p className="text-xs text-[#6b6b7a]">{donor.industry}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-mono font-semibold text-green-400">{donor.amount}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            {senator.topDonors.length > 0 ? (
+              <div className="space-y-3">
+                {senator.topDonors.map((donor, index) => (
+                  <motion.div
+                    key={donor.name}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + index * 0.05 }}
+                    className="flex items-center justify-between p-4 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:border-green-500/30 transition-colors"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-white">{donor.name}</p>
+                      <p className="text-xs text-[#6b6b7a]">{donor.industry}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-mono font-semibold text-green-400">{donor.amount}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-3">
+                  <Users className="w-6 h-6 text-blue-400" />
+                </div>
+                <p className="text-sm text-[#6b6b7a]">Donor data coming soon</p>
+                <p className="text-xs text-[#3d3d4a] mt-1">Connect FEC & OpenSecrets APIs</p>
+              </div>
+            )}
           </motion.div>
 
           {/* Conflict Alerts */}
@@ -407,13 +521,21 @@ export default function PoliticianProfile() {
           <h3 className="text-lg font-semibold text-white mb-4">Official Sources</h3>
           <div className="flex flex-wrap gap-3">
             <ExternalLinkButton
-              href={`https://www.congress.gov/member/${senator.name.toLowerCase().replace(' ', '-')}`}
+              href={`https://www.congress.gov/member/${senator.bioguideId}`}
               label="Congress.gov Profile"
             />
-            <ExternalLinkButton
-              href={`https://www.fec.gov/data/candidate/${senator.name}`}
-              label="FEC Filings"
-            />
+            {senator.fec_id && (
+              <ExternalLinkButton
+                href={`https://www.fec.gov/data/candidate/${senator.fec_id}/`}
+                label="FEC Filings"
+              />
+            )}
+            {senator.opensecrets_id && (
+              <ExternalLinkButton
+                href={`https://www.opensecrets.org/members-of-congress/summary?cid=${senator.opensecrets_id}`}
+                label="OpenSecrets Profile"
+              />
+            )}
             <ExternalLinkButton
               href={`https://efdsearch.senate.gov/search/`}
               label="Financial Disclosures"

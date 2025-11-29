@@ -84,7 +84,7 @@ export default function Home() {
     }
 
     return result;
-  }, [filters]);
+  }, [senators, filters]);
 
   const senatorsWithConflicts = senators.filter((s) => s.conflicts.length > 0);
 
@@ -258,15 +258,31 @@ export default function Home() {
         </motion.div>
 
         {/* Bento Grid of Politicians */}
-        {filteredSenators.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-20">
+            <Loader2 className="w-10 h-10 text-blue-400 animate-spin mx-auto mb-4" />
+            <p className="text-[#6b6b7a]">Loading senators from Congress...</p>
+            <p className="text-xs text-[#3d3d4a] mt-2">Fetching data from official government sources</p>
+          </div>
+        ) : filteredSenators.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSenators.map((senator, index) => (
               <PoliticianCard key={senator.id} senator={senator} index={index} />
             ))}
           </div>
-        ) : (
+        ) : senators.length > 0 ? (
           <div className="text-center py-12">
             <p className="text-[#6b6b7a]">No senators match your filters</p>
+            <button
+              onClick={() => setFilters({ party: 'all', hasConflicts: null, sortBy: 'trades', state: 'All States' })}
+              className="mt-4 px-4 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-colors text-sm"
+            >
+              Clear Filters
+            </button>
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-[#6b6b7a]">Failed to load senators. Please refresh the page.</p>
           </div>
         )}
       </div>

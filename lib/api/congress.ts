@@ -90,7 +90,7 @@ export async function getCurrentSenators() {
   return data.members || [];
 }
 
-// Get committee assignments
+// Get all Senate committees
 export async function getCommittees() {
   if (!API_KEY) return [];
 
@@ -102,4 +102,61 @@ export async function getCommittees() {
   if (!res.ok) return [];
   const data = await res.json();
   return data.committees || [];
+}
+
+// Get a specific member's committee assignments
+export async function getMemberCommittees(bioguideId: string): Promise<string[]> {
+  if (!API_KEY) return [];
+
+  try {
+    const res = await fetch(
+      `${BASE}/member/${bioguideId}?api_key=${API_KEY}`,
+      { next: { revalidate: 86400 } }
+    );
+
+    if (!res.ok) return [];
+    const data = await res.json();
+
+    // Extract committee names from the member data
+    const member = data.member;
+    if (!member) return [];
+
+    // The API returns committee assignments in different formats
+    // Try to extract from depiction or terms
+    const committees: string[] = [];
+
+    // Check if there's a currentMember with committees
+    if (member.terms) {
+      const currentTerm = member.terms[member.terms.length - 1];
+      if (currentTerm?.committees) {
+        currentTerm.committees.forEach((c: any) => {
+          if (c.name) committees.push(c.name);
+        });
+      }
+    }
+
+    return committees;
+  } catch (error) {
+    console.error(`Error fetching committees for ${bioguideId}:`, error);
+    return [];
+  }
+}
+
+// Batch fetch committees for multiple senators (more efficient)
+export async function getMemberDetails(bioguideId: string) {
+  if (!API_KEY) return null;
+
+  try {
+    const res = await fetch(
+      `${BASE}/member/${bioguideId}?api_key=${API_KEY}`,
+      { next: { revalidate: 86400 } }
+    );
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.member;
+  } catch (error) {
+    console.error(`Error fetching member ${bioguideId}:`, error);
+    return null;
+  }
 }

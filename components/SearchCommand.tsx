@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Command, User, MapPin } from 'lucide-react';
-import { senators } from '@/lib/data';
+import { Search, Command, User, MapPin, Loader2 } from 'lucide-react';
+import { fetchSenators, Senator } from '@/lib/data';
 import { cn, getPartyColor } from '@/lib/utils';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,14 +12,25 @@ export function SearchCommand() {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [senators, setSenators] = useState<Senator[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = query
-    ? senators.filter(
-        (s) =>
-          s.name.toLowerCase().includes(query.toLowerCase()) ||
-          s.state.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
+  // Fetch senators on mount
+  useEffect(() => {
+    fetchSenators().then(data => {
+      setSenators(data);
+      setLoading(false);
+    });
+  }, []);
+
+  const filtered = useMemo(() => {
+    if (!query) return [];
+    return senators.filter(
+      (s) =>
+        s.name.toLowerCase().includes(query.toLowerCase()) ||
+        s.state.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [query, senators]);
 
   // Handle CMD+K shortcut
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -93,7 +104,12 @@ export function SearchCommand() {
             transition={{ duration: 0.2 }}
             className="absolute top-full left-0 right-0 mt-2 rounded-xl bg-[#0a0a0f] border border-white/[0.06] overflow-hidden shadow-2xl z-50"
           >
-            {query && filtered.length === 0 ? (
+            {loading ? (
+              <div className="px-4 py-8 text-center">
+                <Loader2 className="w-8 h-8 text-blue-400 animate-spin mx-auto mb-2" />
+                <p className="text-sm text-[#6b6b7a]">Loading senators...</p>
+              </div>
+            ) : query && filtered.length === 0 ? (
               <div className="px-4 py-8 text-center">
                 <User className="w-8 h-8 text-[#3d3d4a] mx-auto mb-2" />
                 <p className="text-sm text-[#6b6b7a]">No senators found</p>
@@ -159,7 +175,7 @@ export function SearchCommand() {
                   </Link>
                 ))}
               </div>
-            ) : (
+            ) : senators.length > 0 ? (
               <div className="px-4 py-6">
                 <p className="text-xs text-[#6b6b7a] uppercase tracking-wide mb-3">Quick Access</p>
                 <div className="grid grid-cols-2 gap-2">
@@ -185,12 +201,12 @@ export function SearchCommand() {
                           unoptimized
                         />
                       </div>
-                      <span className="text-xs text-white truncate">{senator.name.split(' ')[1]}</span>
+                      <span className="text-xs text-white truncate">{senator.lastName}</span>
                     </Link>
                   ))}
                 </div>
               </div>
-            )}
+            ) : null}
           </motion.div>
         )}
       </AnimatePresence>

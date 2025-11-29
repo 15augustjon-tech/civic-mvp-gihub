@@ -13,10 +13,11 @@ export function CompanyConnections({ connections }: CompanyConnectionsProps) {
   if (!connections || connections.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
-        <div className="w-12 h-12 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-3">
-          <span className="text-xl">✓</span>
+        <div className="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-3">
+          <Building2 className="w-6 h-6 text-blue-400" />
         </div>
-        <p className="text-sm text-[#6b6b7a]">No corporate connections on file</p>
+        <p className="text-sm text-[#6b6b7a]">Corporate data coming soon</p>
+        <p className="text-xs text-[#3d3d4a] mt-1">Cross-reference from FEC & disclosures</p>
       </div>
     );
   }

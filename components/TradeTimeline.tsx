@@ -13,11 +13,21 @@ export function TradeTimeline({ trades }: TradeTimelineProps) {
   if (trades.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-4">
-          <span className="text-2xl">✓</span>
+        <div className="w-16 h-16 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
+          <span className="text-2xl text-blue-400">?</span>
         </div>
-        <p className="text-[#6b6b7a]">No stock trades on record</p>
-        <p className="text-xs text-[#3d3d4a] mt-1">This senator has not reported any trades</p>
+        <p className="text-[#6b6b7a]">Stock trade data not yet available</p>
+        <p className="text-xs text-[#3d3d4a] mt-1 max-w-[250px]">
+          Senate financial disclosures require manual scraping from efdsearch.senate.gov
+        </p>
+        <a
+          href="https://efdsearch.senate.gov/search/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+        >
+          View Senate Disclosures →
+        </a>
       </div>
     );
   }

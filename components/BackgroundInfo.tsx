@@ -13,7 +13,15 @@ export function BackgroundInfo({ education, previousCareer }: BackgroundInfoProp
   const hasCareer = previousCareer && previousCareer.length > 0;
 
   if (!hasEducation && !hasCareer) {
-    return null;
+    return (
+      <div className="flex flex-col items-center justify-center py-6 text-center">
+        <div className="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-3">
+          <GraduationCap className="w-6 h-6 text-blue-400" />
+        </div>
+        <p className="text-sm text-[#6b6b7a]">Background data coming soon</p>
+        <p className="text-xs text-[#3d3d4a] mt-1">Education & career history not yet available</p>
+      </div>
+    );
   }
 
   return (
