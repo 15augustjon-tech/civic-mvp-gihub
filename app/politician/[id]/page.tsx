@@ -36,7 +36,12 @@ import { CompanyConnections } from '@/components/CompanyConnections';
 import { BackgroundInfo } from '@/components/BackgroundInfo';
 import { FECFundraising } from '@/components/FECFundraising';
 import { BillsSponsored } from '@/components/BillsSponsored';
-import { FileText } from 'lucide-react';
+import { RealStockTrades } from '@/components/RealStockTrades';
+import { WikipediaBio } from '@/components/WikipediaBio';
+import { NewsSentiment } from '@/components/NewsSentiment';
+import { IdeologyScore } from '@/components/IdeologyScore';
+import { ConflictDetector } from '@/components/ConflictDetector';
+import { FileText, BookOpen, Newspaper, Scale, ShieldAlert } from 'lucide-react';
 
 export default function PoliticianProfile() {
   const params = useParams();
@@ -294,33 +299,23 @@ export default function PoliticianProfile() {
 
         {/* Bento Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Trades - Spans 2 columns */}
+          {/* STOCK Act Trades - Spans 2 columns */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5 }}
             className="lg:col-span-2 rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
           >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white">Recent Stock Trades</h3>
-                  <p className="text-xs text-[#6b6b7a]">{senator.stockTrades} total trades on record</p>
-                </div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-blue-400" />
               </div>
-              {senator.estimatedTradeGains && (
-                <div className="px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20">
-                  <span className="text-sm font-mono font-bold text-green-400">
-                    {senator.estimatedTradeGains}
-                  </span>
-                  <span className="text-xs text-[#6b6b7a] ml-1">est. gains</span>
-                </div>
-              )}
+              <div>
+                <h3 className="text-lg font-semibold text-white">STOCK Act Trades</h3>
+                <p className="text-xs text-[#6b6b7a]">Real trading data from Senate disclosures</p>
+              </div>
             </div>
-            <TradeTimeline trades={senator.recentTrades} />
+            <RealStockTrades senatorName={senator.name} />
           </motion.div>
 
           {/* Voting Record */}
@@ -509,7 +504,7 @@ export default function PoliticianProfile() {
             )}
           </motion.div>
 
-          {/* Conflict Alerts */}
+          {/* Conflict Detection (Algorithm) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -518,37 +513,76 @@ export default function PoliticianProfile() {
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-red-400" />
+                <ShieldAlert className="w-5 h-5 text-red-400" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-white">Conflict Alerts</h3>
-                <p className="text-xs text-[#6b6b7a]">
-                  {hasConflicts ? `${senator.conflicts.length} potential issues` : 'No issues detected'}
-                </p>
+                <h3 className="text-lg font-semibold text-white">Conflict Detection</h3>
+                <p className="text-xs text-[#6b6b7a]">Automated corruption analysis</p>
               </div>
             </div>
-            {hasConflicts ? (
-              <div className="space-y-3">
-                {senator.conflicts.map((conflict, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.45 + index * 0.05 }}
-                    className="p-3 rounded-lg bg-red-500/5 border border-red-500/20"
-                  >
-                    <p className="text-sm text-red-300/80">{conflict}</p>
-                  </motion.div>
-                ))}
+            <ConflictDetector
+              senatorName={senator.name}
+              committees={senator.committees}
+              stockTrades={senator.stockTrades}
+              party={senator.party}
+            />
+          </motion.div>
+
+          {/* Wikipedia Bio */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.42, duration: 0.5 }}
+            className="rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                <BookOpen className="w-5 h-5 text-cyan-400" />
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="w-12 h-12 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-3">
-                  <span className="text-xl">✓</span>
-                </div>
-                <p className="text-sm text-[#6b6b7a]">No conflicts detected</p>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Biography</h3>
+                <p className="text-xs text-[#6b6b7a]">From Wikipedia</p>
               </div>
-            )}
+            </div>
+            <WikipediaBio senatorName={senator.name} />
+          </motion.div>
+
+          {/* News Coverage */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.44, duration: 0.5 }}
+            className="rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                <Newspaper className="w-5 h-5 text-purple-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">News Coverage</h3>
+                <p className="text-xs text-[#6b6b7a]">Recent media mentions</p>
+              </div>
+            </div>
+            <NewsSentiment senatorName={senator.name} />
+          </motion.div>
+
+          {/* Ideology Score */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.46, duration: 0.5 }}
+            className="lg:col-span-2 rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
+                <Scale className="w-5 h-5 text-violet-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Political Ideology</h3>
+                <p className="text-xs text-[#6b6b7a]">Liberal ↔ Conservative spectrum</p>
+              </div>
+            </div>
+            <IdeologyScore partyVotes={senator.partyVotes || 85} party={senator.party} />
           </motion.div>
         </div>
 
