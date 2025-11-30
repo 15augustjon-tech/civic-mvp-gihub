@@ -150,9 +150,12 @@ export function USAMap() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative rounded-xl border-2 border-slate-700/50 overflow-hidden shadow-[0_0_30px_rgba(59,130,246,0.15)]">
+      {/* Outer glow border */}
+      <div className="absolute inset-0 rounded-xl ring-1 ring-blue-500/20 pointer-events-none z-10" />
+
       {/* Grid background */}
-      <div className="absolute inset-0 bg-[#050508] rounded-xl overflow-hidden">
+      <div className="absolute inset-0 bg-[#050508] overflow-hidden">
         <div
           className="absolute inset-0 opacity-30"
           style={{
@@ -344,7 +347,7 @@ export function USAMap() {
       </div>
 
       {/* Scanline effect */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div
           className="absolute inset-0 opacity-5"
           style={{
@@ -353,6 +356,12 @@ export function USAMap() {
           }}
         />
       </div>
+
+      {/* Corner accents */}
+      <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-blue-500/40 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-blue-500/40 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-blue-500/40 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-blue-500/40 pointer-events-none" />
 
       {/* Legend */}
       <div className="absolute bottom-4 left-4 flex items-center gap-4 text-xs text-[#6b6b7a]">
