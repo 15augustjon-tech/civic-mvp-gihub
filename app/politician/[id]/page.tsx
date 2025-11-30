@@ -46,7 +46,10 @@ import { DarkMoneyTracker } from '@/components/DarkMoneyTracker';
 import { CorruptionTimeline } from '@/components/CorruptionTimeline';
 import { LobbyistConnections } from '@/components/LobbyistConnections';
 import { VotingStreak } from '@/components/VotingStreak';
-import { FileText, BookOpen, Newspaper, Scale, ShieldAlert, Flame, EyeOff, Clock, Briefcase } from 'lucide-react';
+import { VotingHistory } from '@/components/VotingHistory';
+import { NetWorthChart } from '@/components/NetWorthChart';
+import { TradingPerformanceChart } from '@/components/TradingPerformanceChart';
+import { FileText, BookOpen, Newspaper, Scale, ShieldAlert, Flame, EyeOff, Clock, Briefcase, History, LineChart, BarChart3 } from 'lucide-react';
 
 export default function PoliticianProfile() {
   const params = useParams();
@@ -473,11 +476,68 @@ export default function PoliticianProfile() {
             <BillsSponsored bioguideId={senator.bioguideId} />
           </motion.div>
 
-          {/* Top Donors */}
+          {/* Detailed Voting History - Congress.gov Data */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.36, duration: 0.5 }}
+            className="lg:col-span-3 rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                <History className="w-5 h-5 text-indigo-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Detailed Voting History</h3>
+                <p className="text-xs text-[#6b6b7a]">Recent votes from Congress.gov with party alignment</p>
+              </div>
+            </div>
+            <VotingHistory bioguideId={senator.bioguideId} party={senator.party} />
+          </motion.div>
+
+          {/* Net Worth Over Time */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.38, duration: 0.5 }}
+            className="lg:col-span-2 rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                <LineChart className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Net Worth Over Time</h3>
+                <p className="text-xs text-[#6b6b7a]">Historical wealth based on financial disclosures</p>
+              </div>
+            </div>
+            <NetWorthChart bioguideId={senator.bioguideId} currentNetWorth={senator.netWorth} />
+          </motion.div>
+
+          {/* Trading Performance vs S&P 500 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.39, duration: 0.5 }}
+            className="rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                <BarChart3 className="w-5 h-5 text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Trading Performance</h3>
+                <p className="text-xs text-[#6b6b7a]">Returns vs S&P 500 benchmark</p>
+              </div>
+            </div>
+            <TradingPerformanceChart bioguideId={senator.bioguideId} senatorName={senator.name} />
+          </motion.div>
+
+          {/* Top Donors */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
             className="rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
           >
             <div className="flex items-center gap-3 mb-6">
