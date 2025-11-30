@@ -54,14 +54,19 @@ export default function PoliticianProfile() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchSenators().then(senators => {
-      const found = senators.find(s =>
-        s.id === (params.id as string).toLowerCase() ||
-        s.bioguideId.toLowerCase() === (params.id as string).toLowerCase()
-      );
-      setSenator(found || null);
-      setLoading(false);
-    });
+    fetchSenators()
+      .then(senators => {
+        const found = senators.find(s =>
+          s.id === (params.id as string).toLowerCase() ||
+          s.bioguideId.toLowerCase() === (params.id as string).toLowerCase()
+        );
+        setSenator(found || null);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Failed to fetch senator:', error);
+        setLoading(false);
+      });
   }, [params.id]);
 
   if (loading) {

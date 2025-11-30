@@ -24,10 +24,15 @@ export default function Home() {
 
   // Fetch real senators on mount
   useEffect(() => {
-    fetchSenators().then(data => {
-      setSenators(data);
-      setLoading(false);
-    });
+    fetchSenators()
+      .then(data => {
+        setSenators(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Failed to fetch senators:', error);
+        setLoading(false);
+      });
   }, []);
 
   const stats = {

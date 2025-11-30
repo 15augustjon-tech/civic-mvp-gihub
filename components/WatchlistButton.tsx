@@ -36,11 +36,17 @@ export function WatchlistButton({
       setUser(user);
 
       if (user) {
-        const res = await fetch('/api/watchlist');
-        const data = await res.json();
-        if (data.watchlist) {
-          const isInList = data.watchlist.some((item: any) => item.politician_id === politicianId);
-          setIsWatching(isInList);
+        try {
+          const res = await fetch('/api/watchlist');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.watchlist) {
+              const isInList = data.watchlist.some((item: any) => item.politician_id === politicianId);
+              setIsWatching(isInList);
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch watchlist:', error);
         }
       }
       setLoading(false);

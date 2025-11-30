@@ -34,16 +34,23 @@ export function DarkMoneyTracker({ senatorName, opensecrets_id }: DarkMoneyTrack
 
           if (json.data?.response?.contributors?.contributor) {
             const contributors = json.data.response.contributors.contributor;
-            const mappedSources: DarkMoneySource[] = contributors.slice(0, 5).map((c: any) => ({
-              name: c['@attributes'].org_name,
-              type: parseInt(c['@attributes'].pacs?.replace(/[^0-9]/g, '') || '0') > 50000 ? 'super_pac' : '501c4',
-              amount: c['@attributes'].total,
-              cycle: '2024',
-              disclosed: parseInt(c['@attributes'].pacs?.replace(/[^0-9]/g, '') || '0') === 0,
-            }));
+            // Ensure contributors is an array
+            const contributorArray = Array.isArray(contributors) ? contributors : [contributors];
 
-            const total = contributors.reduce((acc: number, c: any) => {
-              return acc + parseInt(c['@attributes'].total?.replace(/[^0-9]/g, '') || '0');
+            const mappedSources: DarkMoneySource[] = contributorArray.slice(0, 5).map((c: any) => {
+              const attrs = c?.['@attributes'] || {};
+              return {
+                name: attrs.org_name || 'Unknown',
+                type: parseInt(attrs.pacs?.replace(/[^0-9]/g, '') || '0') > 50000 ? 'super_pac' : '501c4',
+                amount: attrs.total || '$0',
+                cycle: '2024',
+                disclosed: parseInt(attrs.pacs?.replace(/[^0-9]/g, '') || '0') === 0,
+              };
+            });
+
+            const total = contributorArray.reduce((acc: number, c: any) => {
+              const attrs = c?.['@attributes'] || {};
+              return acc + parseInt(attrs.total?.replace(/[^0-9]/g, '') || '0');
             }, 0);
 
             setSources(mappedSources);

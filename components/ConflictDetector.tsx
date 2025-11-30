@@ -29,7 +29,8 @@ export function ConflictDetector({ senatorName, committees, stockTrades, party }
     const detected: Conflict[] = [];
 
     // Check for potential insider trading
-    const financeCommittees = committees.filter(c =>
+    const safeCommittees = committees || [];
+    const financeCommittees = safeCommittees.filter(c =>
       c.toLowerCase().includes('finance') ||
       c.toLowerCase().includes('banking') ||
       c.toLowerCase().includes('commerce') ||

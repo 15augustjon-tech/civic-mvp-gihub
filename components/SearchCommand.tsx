@@ -17,10 +17,15 @@ export function SearchCommand() {
 
   // Fetch senators on mount
   useEffect(() => {
-    fetchSenators().then(data => {
-      setSenators(data);
-      setLoading(false);
-    });
+    fetchSenators()
+      .then(data => {
+        setSenators(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Failed to fetch senators for search:', error);
+        setLoading(false);
+      });
   }, []);
 
   const filtered = useMemo(() => {

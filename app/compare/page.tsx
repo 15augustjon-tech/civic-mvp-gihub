@@ -31,23 +31,28 @@ function CompareContent() {
   const [dropdownB, setDropdownB] = useState(false);
 
   useEffect(() => {
-    fetchSenators().then(data => {
-      setSenators(data);
-      setLoading(false);
+    fetchSenators()
+      .then(data => {
+        setSenators(data);
+        setLoading(false);
 
-      // Check URL params for pre-selected senators
-      const aId = searchParams.get('a');
-      const bId = searchParams.get('b');
+        // Check URL params for pre-selected senators
+        const aId = searchParams.get('a');
+        const bId = searchParams.get('b');
 
-      if (aId) {
-        const found = data.find(s => s.id === aId || s.bioguideId.toLowerCase() === aId.toLowerCase());
-        if (found) setSenatorA(found);
-      }
-      if (bId) {
-        const found = data.find(s => s.id === bId || s.bioguideId.toLowerCase() === bId.toLowerCase());
-        if (found) setSenatorB(found);
-      }
-    });
+        if (aId) {
+          const found = data.find(s => s.id === aId || s.bioguideId.toLowerCase() === aId.toLowerCase());
+          if (found) setSenatorA(found);
+        }
+        if (bId) {
+          const found = data.find(s => s.id === bId || s.bioguideId.toLowerCase() === bId.toLowerCase());
+          if (found) setSenatorB(found);
+        }
+      })
+      .catch(error => {
+        console.error('Failed to fetch senators:', error);
+        setLoading(false);
+      });
   }, [searchParams]);
 
   const getPartyColor = (party: string) => {

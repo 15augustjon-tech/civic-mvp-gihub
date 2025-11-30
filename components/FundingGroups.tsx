@@ -47,8 +47,8 @@ export function FundingGroups({ groups }: FundingGroupsProps) {
     return bVal - aVal;
   });
 
-  // Calculate max for bar width
-  const maxAmount = Math.max(...sortedGroups.map(g => parseFloat(g.amount.replace(/[^0-9.-]/g, '')) || 0));
+  // Calculate max for bar width (prevent division by zero)
+  const maxAmount = Math.max(1, ...sortedGroups.map(g => parseFloat(g.amount.replace(/[^0-9.-]/g, '')) || 0));
 
   return (
     <div className="space-y-3">

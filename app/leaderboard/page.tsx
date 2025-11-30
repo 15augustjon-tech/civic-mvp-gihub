@@ -27,10 +27,15 @@ export default function LeaderboardPage() {
   const [category, setCategory] = useState<LeaderboardCategory>('tenure');
 
   useEffect(() => {
-    fetchSenators().then(data => {
-      setSenators(data);
-      setLoading(false);
-    });
+    fetchSenators()
+      .then(data => {
+        setSenators(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Failed to fetch senators:', error);
+        setLoading(false);
+      });
   }, []);
 
   // Calculate years in office for each senator

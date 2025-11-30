@@ -40,11 +40,16 @@ export default function StatePage({ params }: { params: Promise<{ abbr: string }
   const stateName = stateNames[stateAbbr] || stateAbbr;
 
   useEffect(() => {
-    fetchSenators().then(data => {
-      const stateSenators = data.filter(s => s.stateAbbr === stateAbbr);
-      setSenators(stateSenators);
-      setLoading(false);
-    });
+    fetchSenators()
+      .then(data => {
+        const stateSenators = data.filter(s => s.stateAbbr === stateAbbr);
+        setSenators(stateSenators);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Failed to fetch senators:', error);
+        setLoading(false);
+      });
   }, [stateAbbr]);
 
   const getPartyColor = (party: string) => {

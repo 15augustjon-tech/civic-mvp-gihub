@@ -139,7 +139,7 @@ export function FECFundraising({ fecId }: FECFundraisingProps) {
             <div
               className="bg-green-500 h-2 rounded-full"
               style={{
-                width: `${Math.min((data.individualContributions / data.receipts) * 100, 100)}%`,
+                width: `${data.receipts > 0 ? Math.min((data.individualContributions / data.receipts) * 100, 100) : 0}%`,
               }}
             />
           </div>
@@ -151,7 +151,7 @@ export function FECFundraising({ fecId }: FECFundraisingProps) {
             <div
               className="bg-amber-500 h-2 rounded-full"
               style={{
-                width: `${Math.min((data.pacContributions / data.receipts) * 100, 100)}%`,
+                width: `${data.receipts > 0 ? Math.min((data.pacContributions / data.receipts) * 100, 100) : 0}%`,
               }}
             />
           </div>
