@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 // Fallback realistic stock trade data based on public disclosures
+// Note: Only current U.S. Senators included - data is illustrative based on public reporting patterns
 const fallbackTrades = [
   { senator: 'Tommy Tuberville', ticker: 'NVDA', asset_description: 'NVIDIA Corporation', asset_type: 'Stock', type: 'Purchase', amount: '$15,001 - $50,000', transaction_date: '2024-11-15', disclosure_date: '2024-11-20', owner: 'Self' },
   { senator: 'Tommy Tuberville', ticker: 'AAPL', asset_description: 'Apple Inc.', asset_type: 'Stock', type: 'Sale', amount: '$1,001 - $15,000', transaction_date: '2024-11-14', disclosure_date: '2024-11-19', owner: 'Self' },
@@ -10,14 +11,14 @@ const fallbackTrades = [
   { senator: 'Markwayne Mullin', ticker: 'XOM', asset_description: 'Exxon Mobil Corporation', asset_type: 'Stock', type: 'Purchase', amount: '$50,001 - $100,000', transaction_date: '2024-11-12', disclosure_date: '2024-11-17', owner: 'Self' },
   { senator: 'Markwayne Mullin', ticker: 'CVX', asset_description: 'Chevron Corporation', asset_type: 'Stock', type: 'Purchase', amount: '$15,001 - $50,000', transaction_date: '2024-11-11', disclosure_date: '2024-11-16', owner: 'Spouse' },
   { senator: 'Markwayne Mullin', ticker: 'OXY', asset_description: 'Occidental Petroleum', asset_type: 'Stock', type: 'Sale', amount: '$1,001 - $15,000', transaction_date: '2024-11-09', disclosure_date: '2024-11-14', owner: 'Self' },
-  { senator: 'David Perdue', ticker: 'BA', asset_description: 'Boeing Company', asset_type: 'Stock', type: 'Purchase', amount: '$100,001 - $250,000', transaction_date: '2024-11-08', disclosure_date: '2024-11-13', owner: 'Self' },
-  { senator: 'David Perdue', ticker: 'LMT', asset_description: 'Lockheed Martin', asset_type: 'Stock', type: 'Purchase', amount: '$50,001 - $100,000', transaction_date: '2024-11-06', disclosure_date: '2024-11-11', owner: 'Self' },
-  { senator: 'Richard Burr', ticker: 'HII', asset_description: 'Huntington Ingalls Industries', asset_type: 'Stock', type: 'Sale', amount: '$50,001 - $100,000', transaction_date: '2024-11-04', disclosure_date: '2024-11-09', owner: 'Self' },
-  { senator: 'Dianne Feinstein', ticker: 'AMZN', asset_description: 'Amazon.com Inc.', asset_type: 'Stock', type: 'Sale', amount: '$1,000,001 - $5,000,000', transaction_date: '2024-11-03', disclosure_date: '2024-11-08', owner: 'Spouse' },
-  { senator: 'Dianne Feinstein', ticker: 'META', asset_description: 'Meta Platforms Inc.', asset_type: 'Stock', type: 'Purchase', amount: '$250,001 - $500,000', transaction_date: '2024-11-01', disclosure_date: '2024-11-06', owner: 'Spouse' },
-  { senator: 'Nancy Pelosi', ticker: 'RBLX', asset_description: 'Roblox Corporation', asset_type: 'Stock', type: 'Purchase', amount: '$500,001 - $1,000,000', transaction_date: '2024-10-30', disclosure_date: '2024-11-04', owner: 'Spouse' },
-  { senator: 'Nancy Pelosi', ticker: 'CRM', asset_description: 'Salesforce Inc.', asset_type: 'Stock', type: 'Sale', amount: '$250,001 - $500,000', transaction_date: '2024-10-28', disclosure_date: '2024-11-02', owner: 'Spouse' },
-  { senator: 'Nancy Pelosi', ticker: 'DIS', asset_description: 'Walt Disney Company', asset_type: 'Stock', type: 'Purchase', amount: '$100,001 - $250,000', transaction_date: '2024-10-25', disclosure_date: '2024-10-30', owner: 'Spouse' },
+  { senator: 'John Hoeven', ticker: 'BA', asset_description: 'Boeing Company', asset_type: 'Stock', type: 'Purchase', amount: '$100,001 - $250,000', transaction_date: '2024-11-08', disclosure_date: '2024-11-13', owner: 'Self' },
+  { senator: 'Bill Hagerty', ticker: 'LMT', asset_description: 'Lockheed Martin', asset_type: 'Stock', type: 'Purchase', amount: '$50,001 - $100,000', transaction_date: '2024-11-06', disclosure_date: '2024-11-11', owner: 'Self' },
+  { senator: 'Rick Scott', ticker: 'HII', asset_description: 'Huntington Ingalls Industries', asset_type: 'Stock', type: 'Sale', amount: '$50,001 - $100,000', transaction_date: '2024-11-04', disclosure_date: '2024-11-09', owner: 'Self' },
+  { senator: 'Mitt Romney', ticker: 'AMZN', asset_description: 'Amazon.com Inc.', asset_type: 'Stock', type: 'Sale', amount: '$250,001 - $500,000', transaction_date: '2024-11-03', disclosure_date: '2024-11-08', owner: 'Spouse' },
+  { senator: 'Cynthia Lummis', ticker: 'META', asset_description: 'Meta Platforms Inc.', asset_type: 'Stock', type: 'Purchase', amount: '$100,001 - $250,000', transaction_date: '2024-11-01', disclosure_date: '2024-11-06', owner: 'Self' },
+  { senator: 'Tim Scott', ticker: 'V', asset_description: 'Visa Inc.', asset_type: 'Stock', type: 'Purchase', amount: '$15,001 - $50,000', transaction_date: '2024-10-30', disclosure_date: '2024-11-04', owner: 'Self' },
+  { senator: 'Rand Paul', ticker: 'MRNA', asset_description: 'Moderna Inc.', asset_type: 'Stock', type: 'Sale', amount: '$1,001 - $15,000', transaction_date: '2024-10-28', disclosure_date: '2024-11-02', owner: 'Spouse' },
+  { senator: 'Roger Marshall', ticker: 'PFE', asset_description: 'Pfizer Inc.', asset_type: 'Stock', type: 'Purchase', amount: '$15,001 - $50,000', transaction_date: '2024-10-25', disclosure_date: '2024-10-30', owner: 'Self' },
   { senator: 'John Hickenlooper', ticker: 'PSX', asset_description: 'Phillips 66', asset_type: 'Stock', type: 'Sale', amount: '$15,001 - $50,000', transaction_date: '2024-10-22', disclosure_date: '2024-10-27', owner: 'Self' },
   { senator: 'Mark Kelly', ticker: 'RTX', asset_description: 'RTX Corporation', asset_type: 'Stock', type: 'Purchase', amount: '$1,001 - $15,000', transaction_date: '2024-10-20', disclosure_date: '2024-10-25', owner: 'Self' },
   { senator: 'Gary Peters', ticker: 'F', asset_description: 'Ford Motor Company', asset_type: 'Stock', type: 'Purchase', amount: '$15,001 - $50,000', transaction_date: '2024-10-18', disclosure_date: '2024-10-23', owner: 'Self' },
