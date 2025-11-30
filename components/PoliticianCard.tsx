@@ -3,8 +3,8 @@
 import { motion } from 'framer-motion';
 import { AlertTriangle, TrendingUp, Vote, Calendar, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Senator } from '@/lib/data';
+import { SenatorPhoto } from '@/components/SenatorPhoto';
 import { cn, getPartyColor, getPartyBgClass } from '@/lib/utils';
 
 interface PoliticianCardProps {
@@ -55,13 +55,12 @@ export function PoliticianCard({ senator, index }: PoliticianCardProps) {
                     boxShadow: `0 0 0 2px ${partyColor}, 0 0 20px ${partyColor}30`,
                   }}
                 >
-                  <Image
+                  <SenatorPhoto
                     src={senator.photo}
                     alt={senator.name}
-                    width={64}
-                    height={64}
-                    className="w-full h-full object-cover"
-                    unoptimized
+                    size={64}
+                    party={senator.party}
+                    className="w-full h-full rounded-full"
                   />
                 </div>
                 {/* Party indicator dot */}

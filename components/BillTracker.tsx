@@ -1,9 +1,57 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FileText, CheckCircle, XCircle, Clock, Users, ChevronRight } from 'lucide-react';
-import { recentBills, Bill } from '@/lib/data';
+import { FileText, CheckCircle, XCircle, Clock, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+interface Bill {
+  id: string;
+  title: string;
+  description: string;
+  status: 'Introduced' | 'Committee' | 'Floor Vote' | 'Passed' | 'Failed';
+  date: string;
+  sponsor: string;
+  yeas: number;
+  nays: number;
+  category: string;
+}
+
+// Sample bills for demonstration
+const sampleBills: Bill[] = [
+  {
+    id: 'S.1234',
+    title: 'STOCK Act Enhancement Act',
+    description: 'Strengthens stock trading disclosure requirements for members of Congress',
+    status: 'Committee',
+    date: '2024-11-15',
+    sponsor: 'Sen. Warren',
+    yeas: 0,
+    nays: 0,
+    category: 'Ethics',
+  },
+  {
+    id: 'H.R.5678',
+    title: 'Government Transparency Act',
+    description: 'Requires real-time disclosure of financial transactions',
+    status: 'Floor Vote',
+    date: '2024-11-10',
+    sponsor: 'Rep. Ocasio-Cortez',
+    yeas: 218,
+    nays: 205,
+    category: 'Ethics',
+  },
+  {
+    id: 'S.2468',
+    title: 'Defense Authorization Act',
+    description: 'Annual defense spending and policy authorization',
+    status: 'Passed',
+    date: '2024-11-05',
+    sponsor: 'Sen. Reed',
+    yeas: 83,
+    nays: 11,
+    category: 'Defense',
+  },
+];
 
 export function BillTracker() {
   const getStatusIcon = (status: Bill['status']) => {
@@ -49,13 +97,13 @@ export function BillTracker() {
           </div>
         </div>
         <div className="text-xs text-[#3d3d4a] font-mono">
-          {recentBills.length} ACTIVE BILLS
+          {sampleBills.length} ACTIVE BILLS
         </div>
       </div>
 
       {/* Bills List */}
       <div className="space-y-3">
-        {recentBills.map((bill, index) => (
+        {sampleBills.map((bill, index) => (
           <motion.div
             key={bill.id}
             initial={{ opacity: 0, y: 10 }}
@@ -87,25 +135,29 @@ export function BillTracker() {
                   {getStatusIcon(bill.status)}
                   {bill.status}
                 </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="text-green-400 font-mono">{bill.yeas} YEA</span>
-                  <span className="text-[#3d3d4a]">|</span>
-                  <span className="text-red-400 font-mono">{bill.nays} NAY</span>
-                </div>
+                {bill.yeas > 0 && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-green-400 font-mono">{bill.yeas} YEA</span>
+                    <span className="text-[#3d3d4a]">|</span>
+                    <span className="text-red-400 font-mono">{bill.nays} NAY</span>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Vote Progress Bar */}
-            <div className="mt-3 h-1.5 rounded-full bg-[#1a1a24] overflow-hidden flex">
-              <div
-                className="h-full bg-green-500"
-                style={{ width: `${(bill.yeas / (bill.yeas + bill.nays)) * 100}%` }}
-              />
-              <div
-                className="h-full bg-red-500"
-                style={{ width: `${(bill.nays / (bill.yeas + bill.nays)) * 100}%` }}
-              />
-            </div>
+            {bill.yeas > 0 && (
+              <div className="mt-3 h-1.5 rounded-full bg-[#1a1a24] overflow-hidden flex">
+                <div
+                  className="h-full bg-green-500"
+                  style={{ width: `${(bill.yeas / (bill.yeas + bill.nays)) * 100}%` }}
+                />
+                <div
+                  className="h-full bg-red-500"
+                  style={{ width: `${(bill.nays / (bill.yeas + bill.nays)) * 100}%` }}
+                />
+              </div>
+            )}
           </motion.div>
         ))}
       </div>

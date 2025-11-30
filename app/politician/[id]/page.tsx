@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import Image from 'next/image';
+import { SenatorPhoto } from '@/components/SenatorPhoto';
 import {
   ArrowLeft,
   Download,
@@ -41,7 +41,12 @@ import { WikipediaBio } from '@/components/WikipediaBio';
 import { NewsSentiment } from '@/components/NewsSentiment';
 import { IdeologyScore } from '@/components/IdeologyScore';
 import { ConflictDetector } from '@/components/ConflictDetector';
-import { FileText, BookOpen, Newspaper, Scale, ShieldAlert } from 'lucide-react';
+import { WatchlistButton } from '@/components/WatchlistButton';
+import { DarkMoneyTracker } from '@/components/DarkMoneyTracker';
+import { CorruptionTimeline } from '@/components/CorruptionTimeline';
+import { LobbyistConnections } from '@/components/LobbyistConnections';
+import { VotingStreak } from '@/components/VotingStreak';
+import { FileText, BookOpen, Newspaper, Scale, ShieldAlert, Flame, EyeOff, Clock, Briefcase } from 'lucide-react';
 
 export default function PoliticianProfile() {
   const params = useParams();
@@ -106,6 +111,13 @@ export default function PoliticianProfile() {
           </Link>
           <div className="flex items-center gap-3">
             <span className="text-xs text-[#3d3d4a] font-mono">DOSSIER #{senator.id.toUpperCase()}</span>
+            <WatchlistButton
+              politicianId={senator.id}
+              politicianName={senator.name}
+              politicianParty={senator.party}
+              politicianState={senator.state}
+              politicianChamber="senate"
+            />
             <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-colors text-sm">
               <Download className="w-4 h-4" />
               Export Dossier
@@ -139,13 +151,12 @@ export default function PoliticianProfile() {
                   boxShadow: `0 0 0 3px ${partyColor}, 0 0 40px ${partyColor}30`,
                 }}
               >
-                <Image
+                <SenatorPhoto
                   src={senator.photo}
                   alt={senator.name}
-                  width={160}
-                  height={160}
-                  className="w-full h-full object-cover"
-                  unoptimized
+                  size={160}
+                  party={senator.party}
+                  className="w-full h-full"
                 />
               </div>
             </div>
@@ -583,6 +594,89 @@ export default function PoliticianProfile() {
               </div>
             </div>
             <IdeologyScore partyVotes={senator.partyVotes || 85} party={senator.party} />
+          </motion.div>
+
+          {/* Voting Streak */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.48, duration: 0.5 }}
+            className="rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+                <Flame className="w-5 h-5 text-orange-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Voting Streak</h3>
+                <p className="text-xs text-[#6b6b7a]">Attendance & consistency</p>
+              </div>
+            </div>
+            <VotingStreak
+              recentVotes={senator.recentVotes || []}
+              attendance={senator.attendance}
+            />
+          </motion.div>
+
+          {/* Dark Money Tracker */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+            className="rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                <EyeOff className="w-5 h-5 text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Dark Money</h3>
+                <p className="text-xs text-[#6b6b7a]">Undisclosed funding sources</p>
+              </div>
+            </div>
+            <DarkMoneyTracker senatorName={senator.name} opensecrets_id={senator.opensecrets_id} />
+          </motion.div>
+
+          {/* Lobbyist Connections */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.52, duration: 0.5 }}
+            className="lg:col-span-2 rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                <Briefcase className="w-5 h-5 text-purple-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Lobbyist Connections</h3>
+                <p className="text-xs text-[#6b6b7a]">Who's lobbying this senator</p>
+              </div>
+            </div>
+            <LobbyistConnections senatorName={senator.name} state={senator.state} />
+          </motion.div>
+
+          {/* Corruption Timeline */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.54, duration: 0.5 }}
+            className="lg:col-span-3 rounded-xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.06] p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                <Clock className="w-5 h-5 text-amber-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Activity Timeline</h3>
+                <p className="text-xs text-[#6b6b7a]">Cross-referenced trades, votes & donations</p>
+              </div>
+            </div>
+            <CorruptionTimeline
+                  senatorName={senator.name}
+                  stockTrades={senator.stockTrades}
+                  party={senator.party}
+                />
           </motion.div>
         </div>
 

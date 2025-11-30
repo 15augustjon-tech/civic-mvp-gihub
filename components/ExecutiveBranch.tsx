@@ -2,8 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
-import { Crown, Building2, Users, ChevronRight, AlertTriangle, Shield } from 'lucide-react';
+import { Crown, Building2, Users, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CabinetMember {
@@ -18,111 +17,114 @@ interface CabinetMember {
   party: 'R' | 'D' | 'I';
 }
 
-// Current administration (as of 2024)
+// Trump Administration (2025)
 const president: CabinetMember = {
-  id: 'biden',
-  name: 'Joe Biden',
+  id: 'trump',
+  name: 'Donald J. Trump',
   title: 'President of the United States',
   department: 'Executive Office',
-  photo: 'https://www.whitehouse.gov/wp-content/uploads/2021/04/P20210303AS-1901-cropped.jpg',
-  since: 'January 2021',
-  netWorth: '$10M',
-  party: 'D',
+  photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Donald_Trump_official_portrait.jpg/440px-Donald_Trump_official_portrait.jpg',
+  since: 'January 2025',
+  netWorth: '$2.6B',
+  conflicts: ['Extensive business holdings worldwide'],
+  party: 'R',
 };
 
 const vicePresident: CabinetMember = {
-  id: 'harris',
-  name: 'Kamala Harris',
+  id: 'vance',
+  name: 'JD Vance',
   title: 'Vice President',
   department: 'Executive Office',
-  photo: 'https://www.whitehouse.gov/wp-content/uploads/2021/04/V20210305LJ-0043-cropped.jpg',
-  since: 'January 2021',
-  netWorth: '$8M',
-  party: 'D',
+  photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Senator_Vance_official_portrait%2C_118th_Congress.jpg/440px-Senator_Vance_official_portrait%2C_118th_Congress.jpg',
+  since: 'January 2025',
+  netWorth: '$10M',
+  party: 'R',
 };
 
 const cabinetMembers: CabinetMember[] = [
   {
-    id: 'blinken',
-    name: 'Antony Blinken',
+    id: 'rubio',
+    name: 'Marco Rubio',
     title: 'Secretary of State',
     department: 'State Department',
-    photo: 'https://www.state.gov/wp-content/uploads/2022/10/Antony-Blinken-high-resolution-1200x630.jpg',
-    since: 'January 2021',
-    netWorth: '$10M',
-    party: 'D',
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Senator_Rubio_official_portrait%2C_118th_Congress.jpg/440px-Senator_Rubio_official_portrait%2C_118th_Congress.jpg',
+    since: 'January 2025',
+    netWorth: '$500K',
+    party: 'R',
   },
   {
-    id: 'yellen',
-    name: 'Janet Yellen',
+    id: 'bessent',
+    name: 'Scott Bessent',
     title: 'Secretary of the Treasury',
     department: 'Treasury Department',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Janet_Yellen_official_Federal_Reserve_portrait.jpg/440px-Janet_Yellen_official_Federal_Reserve_portrait.jpg',
-    since: 'January 2021',
-    netWorth: '$20M',
-    conflicts: ['Former Federal Reserve Chair', 'Received speaking fees from Wall Street'],
-    party: 'D',
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Scott_Bessent_%28cropped%29.jpg/440px-Scott_Bessent_%28cropped%29.jpg',
+    since: 'January 2025',
+    netWorth: '$700M',
+    conflicts: ['Former hedge fund manager', 'Key Square Group founder'],
+    party: 'R',
   },
   {
-    id: 'austin',
-    name: 'Lloyd Austin',
+    id: 'hegseth',
+    name: 'Pete Hegseth',
     title: 'Secretary of Defense',
     department: 'Department of Defense',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Lloyd_J._Austin_III.jpg/440px-Lloyd_J._Austin_III.jpg',
-    since: 'January 2021',
-    netWorth: '$7M',
-    conflicts: ['Former Raytheon board member'],
-    party: 'D',
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Pete_Hegseth.jpg/440px-Pete_Hegseth.jpg',
+    since: 'January 2025',
+    netWorth: '$4M',
+    conflicts: ['Former Fox News host'],
+    party: 'R',
   },
   {
-    id: 'garland',
-    name: 'Merrick Garland',
+    id: 'bondi',
+    name: 'Pam Bondi',
     title: 'Attorney General',
     department: 'Department of Justice',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Merrick_Garland_official_portrait_%28cropped%29.jpg/440px-Merrick_Garland_official_portrait_%28cropped%29.jpg',
-    since: 'March 2021',
-    netWorth: '$10M',
-    party: 'D',
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Pam_Bondi_official_photo.jpg/440px-Pam_Bondi_official_photo.jpg',
+    since: 'January 2025',
+    netWorth: '$3M',
+    party: 'R',
   },
   {
-    id: 'becerra',
-    name: 'Xavier Becerra',
+    id: 'kennedy',
+    name: 'Robert F. Kennedy Jr.',
     title: 'Secretary of HHS',
     department: 'Health & Human Services',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Xavier_Becerra_Official_Photo.jpg/440px-Xavier_Becerra_Official_Photo.jpg',
-    since: 'March 2021',
-    netWorth: '$2M',
-    party: 'D',
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Robert_F._Kennedy_Jr._%2853106730648%29_%28cropped%29.jpg/440px-Robert_F._Kennedy_Jr._%2853106730648%29_%28cropped%29.jpg',
+    since: 'January 2025',
+    netWorth: '$15M',
+    conflicts: ['Vaccine skepticism', 'Environmental lawyer'],
+    party: 'R',
   },
   {
-    id: 'buttigieg',
-    name: 'Pete Buttigieg',
+    id: 'duffy',
+    name: 'Sean Duffy',
     title: 'Secretary of Transportation',
     department: 'Department of Transportation',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Pete_Buttigieg_official_photo_%28cropped%29.jpg/440px-Pete_Buttigieg_official_photo_%28cropped%29.jpg',
-    since: 'February 2021',
-    netWorth: '$750K',
-    party: 'D',
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Sean_Duffy%2C_Official_Portrait%2C_116th_Congress.jpg/440px-Sean_Duffy%2C_Official_Portrait%2C_116th_Congress.jpg',
+    since: 'January 2025',
+    netWorth: '$1M',
+    party: 'R',
   },
   {
-    id: 'raimondo',
-    name: 'Gina Raimondo',
+    id: 'lutnick',
+    name: 'Howard Lutnick',
     title: 'Secretary of Commerce',
     department: 'Department of Commerce',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Gina_Raimondo_%28cropped%29.jpg/440px-Gina_Raimondo_%28cropped%29.jpg',
-    since: 'March 2021',
-    netWorth: '$5M',
-    party: 'D',
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Howard_Lutnick_2017.jpg/440px-Howard_Lutnick_2017.jpg',
+    since: 'January 2025',
+    netWorth: '$1.5B',
+    conflicts: ['Cantor Fitzgerald CEO', 'Financial industry ties'],
+    party: 'R',
   },
   {
-    id: 'vilsack',
-    name: 'Tom Vilsack',
+    id: 'rollins',
+    name: 'Brooke Rollins',
     title: 'Secretary of Agriculture',
     department: 'Department of Agriculture',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Tom_Vilsack%2C_official_USDA_photo_portrait.jpg/440px-Tom_Vilsack%2C_official_USDA_photo_portrait.jpg',
-    since: 'February 2021',
-    netWorth: '$3M',
-    party: 'D',
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Brooke_Rollins_official_photo.jpg/440px-Brooke_Rollins_official_photo.jpg',
+    since: 'January 2025',
+    netWorth: '$2M',
+    party: 'R',
   },
 ];
 
@@ -134,17 +136,17 @@ export function ExecutiveBranch() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-            <Crown className="w-5 h-5 text-purple-400" />
+          <div className="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+            <Crown className="w-5 h-5 text-red-400" />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white">Executive Branch</h3>
-            <p className="text-xs text-[#6b6b7a]">President, Vice President & Cabinet</p>
+            <p className="text-xs text-[#6b6b7a]">Trump Administration 2025</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
-          <Users className="w-4 h-4 text-blue-400" />
-          <span className="text-sm text-blue-400 font-medium">{cabinetMembers.length + 2} Officials</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20">
+          <Users className="w-4 h-4 text-red-400" />
+          <span className="text-sm text-red-400 font-medium">{cabinetMembers.length + 2} Officials</span>
         </div>
       </div>
 
@@ -185,7 +187,7 @@ export function ExecutiveBranch() {
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage:
-              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139,92,246,0.03) 2px, rgba(139,92,246,0.03) 4px)',
+              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(239,68,68,0.03) 2px, rgba(239,68,68,0.03) 4px)',
           }}
         />
       </div>
@@ -194,14 +196,16 @@ export function ExecutiveBranch() {
 }
 
 function ExecutiveCard({ member, isPresident = false, isVP = false }: { member: CabinetMember; isPresident?: boolean; isVP?: boolean }) {
+  const hasConflicts = member.conflicts && member.conflicts.length > 0;
+
   return (
     <div
       className={cn(
         'group relative overflow-hidden rounded-xl p-5 transition-all duration-300',
         'bg-gradient-to-br border',
         isPresident
-          ? 'from-blue-500/10 to-purple-500/10 border-blue-500/20 hover:border-blue-500/40'
-          : 'from-purple-500/10 to-pink-500/10 border-purple-500/20 hover:border-purple-500/40'
+          ? 'from-red-500/10 to-amber-500/10 border-red-500/20 hover:border-red-500/40'
+          : 'from-blue-500/10 to-red-500/10 border-blue-500/20 hover:border-blue-500/40'
       )}
     >
       <div className="flex items-start gap-4">
@@ -209,7 +213,7 @@ function ExecutiveCard({ member, isPresident = false, isVP = false }: { member: 
         <div
           className={cn(
             'w-20 h-20 rounded-xl overflow-hidden shrink-0',
-            isPresident ? 'ring-2 ring-blue-500/50' : 'ring-2 ring-purple-500/50'
+            isPresident ? 'ring-2 ring-red-500/50' : 'ring-2 ring-blue-500/50'
           )}
         >
           <Image
@@ -227,10 +231,11 @@ function ExecutiveCard({ member, isPresident = false, isVP = false }: { member: 
           <div className="flex items-center gap-2 mb-1">
             {isPresident && <Crown className="w-4 h-4 text-yellow-500" />}
             <h4 className="text-lg font-semibold text-white truncate">{member.name}</h4>
+            {hasConflicts && <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />}
           </div>
           <p className={cn(
             'text-sm font-medium mb-1',
-            isPresident ? 'text-blue-400' : 'text-purple-400'
+            isPresident ? 'text-red-400' : 'text-blue-400'
           )}>
             {member.title}
           </p>
@@ -259,7 +264,7 @@ function CabinetCard({ member }: { member: CabinetMember }) {
         'bg-white/[0.02] border hover:translate-y-[-2px]',
         hasConflicts
           ? 'border-amber-500/20 hover:border-amber-500/40'
-          : 'border-white/[0.04] hover:border-blue-500/30'
+          : 'border-white/[0.04] hover:border-red-500/30'
       )}
     >
       <div className="flex items-center gap-3">
@@ -278,7 +283,7 @@ function CabinetCard({ member }: { member: CabinetMember }) {
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1">
-            <h5 className="text-sm font-medium text-white truncate">{member.name.split(' ')[1]}</h5>
+            <h5 className="text-sm font-medium text-white truncate">{member.name.split(' ').pop()}</h5>
             {hasConflicts && <AlertTriangle className="w-3 h-3 text-amber-400 shrink-0" />}
           </div>
           <p className="text-[10px] text-[#6b6b7a] truncate">{member.title}</p>

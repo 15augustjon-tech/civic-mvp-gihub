@@ -15,6 +15,8 @@ import { ExecutiveBranch } from '@/components/ExecutiveBranch';
 import { BillTracker } from '@/components/BillTracker';
 import { StockWinners } from '@/components/StockWinners';
 import { FilterControls, FilterState } from '@/components/FilterControls';
+import { AuthHeader } from '@/components/AuthHeader';
+import { DataSources } from '@/components/DataSources';
 
 export default function Home() {
   const [senators, setSenators] = useState<Senator[]>([]);
@@ -94,6 +96,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#050508] bg-grid">
+      {/* Auth Header */}
+      <div className="fixed top-4 right-6 z-50">
+        <AuthHeader />
+      </div>
+
       {/* Hero Section */}
       <div className="bg-mesh">
         <div className="max-w-7xl mx-auto px-6 pt-16 pb-8">
@@ -319,6 +326,11 @@ export default function Home() {
             <p className="text-[#6b6b7a]">Failed to load senators. Please refresh the page.</p>
           </div>
         )}
+      </div>
+
+      {/* Data Sources Section */}
+      <div className="max-w-7xl mx-auto px-6 pb-12">
+        <DataSources />
       </div>
 
       {/* Footer */}

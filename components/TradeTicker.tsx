@@ -1,14 +1,42 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { getAllTrades } from '@/lib/data';
+import { useState, useEffect } from 'react';
 import { getDaysAgo } from '@/lib/utils';
 
+interface Trade {
+  senator: string;
+  ticker: string;
+  type: string;
+  amount: string;
+  transactionDate: string;
+}
+
 export function TradeTicker() {
-  const allTrades = getAllTrades();
+  const [trades, setTrades] = useState<Trade[]>([]);
+
+  useEffect(() => {
+    fetch('/api/stock-trades')
+      .then(res => res.json())
+      .then(data => {
+        if (data.trades) {
+          setTrades(data.trades.slice(0, 20));
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   // Duplicate trades for seamless infinite scroll
-  const duplicatedTrades = [...allTrades, ...allTrades];
+  const duplicatedTrades = [...trades, ...trades];
+
+  if (trades.length === 0) {
+    return (
+      <div className="relative w-full overflow-hidden bg-[#08080c] border-y border-white/[0.03]">
+        <div className="animate-ticker flex items-center gap-8 py-3 px-4 whitespace-nowrap">
+          <span className="text-[#3d3d4a] text-sm">Loading latest stock trades...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full overflow-hidden bg-[#08080c] border-y border-white/[0.03]">
@@ -18,37 +46,42 @@ export function TradeTicker() {
 
       {/* Ticker content */}
       <div className="animate-ticker flex items-center gap-8 py-3 px-4 hover:pause whitespace-nowrap">
-        {duplicatedTrades.map((trade, index) => (
-          <div
-            key={`${trade.senatorId}-${trade.ticker}-${index}`}
-            className="flex items-center gap-3 text-sm"
-          >
-            {/* Trade type indicator */}
-            <span
-              className={`w-2 h-2 rounded-full ${
-                trade.type === 'BUY' ? 'bg-red-500' : 'bg-green-500'
-              } animate-pulse`}
-            />
+        {duplicatedTrades.map((trade, index) => {
+          const isPurchase = trade.type?.toLowerCase().includes('purchase');
+          const senatorLastName = trade.senator?.split(' ').pop() || 'Unknown';
 
-            {/* Trade info */}
-            <span className="text-[#6b6b7a]">Sen.</span>
-            <span className="text-white font-medium">{trade.senatorName.split(' ')[1]}</span>
-            <span
-              className={`font-semibold ${
-                trade.type === 'BUY' ? 'text-red-400' : 'text-green-400'
-              }`}
+          return (
+            <div
+              key={`${trade.senator}-${trade.ticker}-${index}`}
+              className="flex items-center gap-3 text-sm"
             >
-              {trade.type === 'BUY' ? 'BOUGHT' : 'SOLD'}
-            </span>
-            <span className="text-[#6b6b7a]">{trade.amount}</span>
-            <span className="font-mono font-bold text-blue-400">{trade.ticker}</span>
-            <span className="text-[#3d3d4a]">•</span>
-            <span className="text-[#3d3d4a] text-xs">{getDaysAgo(trade.date)}</span>
+              {/* Trade type indicator */}
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  isPurchase ? 'bg-green-500' : 'bg-red-500'
+                } animate-pulse`}
+              />
 
-            {/* Separator */}
-            <span className="text-[#1a1a24] mx-4">│</span>
-          </div>
-        ))}
+              {/* Trade info */}
+              <span className="text-[#6b6b7a]">Sen.</span>
+              <span className="text-white font-medium">{senatorLastName}</span>
+              <span
+                className={`font-semibold ${
+                  isPurchase ? 'text-green-400' : 'text-red-400'
+                }`}
+              >
+                {isPurchase ? 'BOUGHT' : 'SOLD'}
+              </span>
+              <span className="text-[#6b6b7a]">{trade.amount || 'N/A'}</span>
+              <span className="font-mono font-bold text-blue-400">{trade.ticker || 'N/A'}</span>
+              <span className="text-[#3d3d4a]">•</span>
+              <span className="text-[#3d3d4a] text-xs">{getDaysAgo(trade.transactionDate)}</span>
+
+              {/* Separator */}
+              <span className="text-[#1a1a24] mx-4">│</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
