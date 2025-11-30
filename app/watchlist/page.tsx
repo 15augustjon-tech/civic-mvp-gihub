@@ -27,29 +27,40 @@ export default function WatchlistPage() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-      setUser(user);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          router.push('/login');
+          return;
+        }
+        setUser(user);
 
-      // Fetch watchlist
-      const res = await fetch('/api/watchlist');
-      const data = await res.json();
-      setWatchlist(data.watchlist || []);
-      setLoading(false);
+        // Fetch watchlist
+        const res = await fetch('/api/watchlist');
+        if (res.ok) {
+          const data = await res.json();
+          setWatchlist(data.watchlist || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch watchlist:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     checkAuth();
   }, [router, supabase.auth]);
 
   const handleRemove = async (politicianId: string) => {
-    const res = await fetch(`/api/watchlist?politician_id=${politicianId}`, {
-      method: 'DELETE',
-    });
-    if (res.ok) {
-      setWatchlist(prev => prev.filter(item => item.politician_id !== politicianId));
+    try {
+      const res = await fetch(`/api/watchlist?politician_id=${politicianId}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setWatchlist(prev => prev.filter(item => item.politician_id !== politicianId));
+      }
+    } catch (error) {
+      console.error('Failed to remove from watchlist:', error);
     }
   };
 

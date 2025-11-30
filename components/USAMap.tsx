@@ -306,10 +306,14 @@ export function USAMap() {
 
   // Fetch real senators on mount
   useEffect(() => {
-    fetchSenators().then(data => {
-      setSenators(data);
-      setSenatorsByState(groupSenatorsByState(data));
-    });
+    fetchSenators()
+      .then(data => {
+        setSenators(data);
+        setSenatorsByState(groupSenatorsByState(data));
+      })
+      .catch(error => {
+        console.error('Failed to fetch senators for map:', error);
+      });
   }, []);
 
   const handleMouseEnter = (abbr: string, e: React.MouseEvent) => {
