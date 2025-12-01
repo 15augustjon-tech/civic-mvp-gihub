@@ -24,10 +24,55 @@ interface TradingDataPoint {
 
 interface TradingPerformanceChartProps {
   bioguideId: string;
-  senatorName: string;
 }
 
-export function TradingPerformanceChart({ bioguideId, senatorName }: TradingPerformanceChartProps) {
+// CustomTooltip component moved outside
+interface TradingTooltipPayload {
+  payload: TradingDataPoint;
+}
+
+interface TradingTooltipProps {
+  active?: boolean;
+  payload?: TradingTooltipPayload[];
+  label?: string;
+}
+
+function TradingCustomTooltip({ active, payload, label }: TradingTooltipProps) {
+  if (active && payload && payload.length) {
+    const dataPoint = payload[0].payload;
+    return (
+      <div className="bg-[#0a0a0f] border border-white/10 rounded-lg p-3 shadow-xl">
+        <p className="text-xs text-[#6b6b7a] mb-2">{label}</p>
+        <div className="space-y-1">
+          <p className="text-sm">
+            <span className="text-blue-400">Senator: </span>
+            <span className={cn(
+              "font-mono font-bold",
+              dataPoint.senatorReturn >= 0 ? "text-green-400" : "text-red-400"
+            )}>
+              {dataPoint.senatorReturn >= 0 ? '+' : ''}{dataPoint.senatorReturn.toFixed(1)}%
+            </span>
+          </p>
+          <p className="text-sm">
+            <span className="text-amber-400">S&P 500: </span>
+            <span className={cn(
+              "font-mono font-bold",
+              dataPoint.sp500Return >= 0 ? "text-green-400" : "text-red-400"
+            )}>
+              {dataPoint.sp500Return >= 0 ? '+' : ''}{dataPoint.sp500Return.toFixed(1)}%
+            </span>
+          </p>
+          <p className="text-xs text-[#6b6b7a] mt-2">
+            {dataPoint.tradeCount} trades this month
+          </p>
+        </div>
+      </div>
+    );
+  }
+  return null;
+}
+
+export function TradingPerformanceChart({ bioguideId }: TradingPerformanceChartProps) {
   const [data, setData] = useState<TradingDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -71,41 +116,6 @@ export function TradingPerformanceChart({ bioguideId, senatorName }: TradingPerf
   const avgMonthlyReturn = data.length > 0
     ? data.reduce((sum, d) => sum + d.senatorReturn, 0) / data.length
     : 0;
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const dataPoint = payload[0].payload;
-      return (
-        <div className="bg-[#0a0a0f] border border-white/10 rounded-lg p-3 shadow-xl">
-          <p className="text-xs text-[#6b6b7a] mb-2">{label}</p>
-          <div className="space-y-1">
-            <p className="text-sm">
-              <span className="text-blue-400">Senator: </span>
-              <span className={cn(
-                "font-mono font-bold",
-                dataPoint.senatorReturn >= 0 ? "text-green-400" : "text-red-400"
-              )}>
-                {dataPoint.senatorReturn >= 0 ? '+' : ''}{dataPoint.senatorReturn.toFixed(1)}%
-              </span>
-            </p>
-            <p className="text-sm">
-              <span className="text-amber-400">S&P 500: </span>
-              <span className={cn(
-                "font-mono font-bold",
-                dataPoint.sp500Return >= 0 ? "text-green-400" : "text-red-400"
-              )}>
-                {dataPoint.sp500Return >= 0 ? '+' : ''}{dataPoint.sp500Return.toFixed(1)}%
-              </span>
-            </p>
-            <p className="text-xs text-[#6b6b7a] mt-2">
-              {dataPoint.tradeCount} trades this month
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
 
   if (loading) {
     return (
@@ -232,7 +242,7 @@ export function TradingPerformanceChart({ bioguideId, senatorName }: TradingPerf
               tickFormatter={(value) => `${value}%`}
               width={45}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<TradingCustomTooltip />} />
             <Legend
               wrapperStyle={{ paddingTop: '10px' }}
               formatter={(value) => (

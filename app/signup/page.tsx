@@ -67,7 +67,7 @@ export default function SignupPage() {
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">Check your email</h1>
           <p className="text-[#6b6b7a] mb-6">
-            We've sent a confirmation link to <span className="text-white">{email}</span>
+            We&apos;ve sent a confirmation link to <span className="text-white">{email}</span>
           </p>
           <Link
             href="/login"

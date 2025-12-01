@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Shield, Activity, Eye, Loader2, Trophy, Users, MapPin } from 'lucide-react';
 import Link from 'next/link';
-import { fetchSenators, getTotalStats, Senator } from '@/lib/data';
+import { fetchSenators, Senator } from '@/lib/data';
 import { PoliticianCard } from '@/components/PoliticianCard';
 import { SearchCommand } from '@/components/SearchCommand';
 import { StatsTicker } from '@/components/StatsTicker';
@@ -359,7 +359,7 @@ export default function Home() {
           </div>
           <div className="mt-8 pt-8 border-t border-white/[0.04] text-center">
             <p className="text-[10px] text-[#3d3d4a] font-mono uppercase tracking-wider">
-              // SURVEILLANCE TERMINAL v1.0 • ALL DATA IS PUBLIC RECORD //
+              {`// SURVEILLANCE TERMINAL v1.0 • ALL DATA IS PUBLIC RECORD //`}
             </p>
           </div>
         </div>

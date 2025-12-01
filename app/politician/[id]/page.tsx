@@ -29,7 +29,6 @@ import {
 } from 'lucide-react';
 import { fetchSenators, Senator } from '@/lib/data';
 import { cn, getPartyColor, getPartyBgClass, getPartyName } from '@/lib/utils';
-import { TradeTimeline } from '@/components/TradeTimeline';
 import { VotingRecordChart } from '@/components/VotingRecordChart';
 import { FundingGroups } from '@/components/FundingGroups';
 import { CompanyConnections } from '@/components/CompanyConnections';
@@ -530,7 +529,7 @@ export default function PoliticianProfile() {
                 <p className="text-xs text-[#6b6b7a]">Returns vs S&P 500 benchmark</p>
               </div>
             </div>
-            <TradingPerformanceChart bioguideId={senator.bioguideId} senatorName={senator.name} />
+            <TradingPerformanceChart bioguideId={senator.bioguideId} />
           </motion.div>
 
           {/* Top Donors */}
@@ -715,7 +714,7 @@ export default function PoliticianProfile() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-white">Lobbyist Connections</h3>
-                <p className="text-xs text-[#6b6b7a]">Who's lobbying this senator</p>
+                <p className="text-xs text-[#6b6b7a]">Who&apos;s lobbying this senator</p>
               </div>
             </div>
             <LobbyistConnections senatorName={senator.name} state={senator.state} />
@@ -782,7 +781,7 @@ export default function PoliticianProfile() {
       <footer className="border-t border-white/[0.04] py-8 mt-12">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <p className="text-xs text-[#3d3d4a] font-mono">
-            // ALL DATA IS PUBLIC RECORD • SOURCED FROM OFFICIAL GOVERNMENT DATABASES //
+            {`// ALL DATA IS PUBLIC RECORD • SOURCED FROM OFFICIAL GOVERNMENT DATABASES //`}
           </p>
         </div>
       </footer>

@@ -8,7 +8,6 @@ import {
   Clock,
   DollarSign,
   TrendingUp,
-  Users,
   ChevronRight,
   Loader2,
   ArrowLeft,

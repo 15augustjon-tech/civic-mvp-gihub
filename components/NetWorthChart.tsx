@@ -28,6 +28,55 @@ interface NetWorthChartProps {
   currentNetWorth?: string;
 }
 
+// Helper functions
+function formatCurrency(value: number) {
+  if (value >= 1000000) {
+    return `$${(value / 1000000).toFixed(1)}M`;
+  }
+  if (value >= 1000) {
+    return `$${(value / 1000).toFixed(0)}K`;
+  }
+  return `$${value}`;
+}
+
+function formatFullCurrency(value: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+// CustomTooltip component moved outside
+interface TooltipPayload {
+  payload: NetWorthDataPoint;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayload[];
+  label?: string;
+}
+
+function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+  if (active && payload && payload.length) {
+    const dataPoint = payload[0].payload;
+    return (
+      <div className="bg-[#0a0a0f] border border-white/10 rounded-lg p-3 shadow-xl">
+        <p className="text-xs text-[#6b6b7a] mb-2">{label}</p>
+        <p className="text-lg font-bold text-white mb-1">
+          {formatFullCurrency(dataPoint.netWorth)}
+        </p>
+        <div className="text-xs text-[#6b6b7a] space-y-1">
+          <p>Assets: {formatCurrency(dataPoint.assetsMin)} - {formatCurrency(dataPoint.assetsMax)}</p>
+          <p>Liabilities: {formatCurrency(dataPoint.liabilitiesMin)} - {formatCurrency(dataPoint.liabilitiesMax)}</p>
+        </div>
+      </div>
+    );
+  }
+  return null;
+}
+
 export function NetWorthChart({ bioguideId, currentNetWorth }: NetWorthChartProps) {
   const [data, setData] = useState<NetWorthDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,48 +95,11 @@ export function NetWorthChart({ bioguideId, currentNetWorth }: NetWorthChartProp
       });
   }, [bioguideId]);
 
-  const formatCurrency = (value: number) => {
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(1)}M`;
-    }
-    if (value >= 1000) {
-      return `$${(value / 1000).toFixed(0)}K`;
-    }
-    return `$${value}`;
-  };
-
-  const formatFullCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
   // Calculate growth
   const firstValue = data[0]?.netWorth || 0;
   const lastValue = data[data.length - 1]?.netWorth || 0;
   const totalGrowth = firstValue > 0 ? ((lastValue - firstValue) / firstValue) * 100 : 0;
   const isPositiveGrowth = totalGrowth >= 0;
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const dataPoint = payload[0].payload;
-      return (
-        <div className="bg-[#0a0a0f] border border-white/10 rounded-lg p-3 shadow-xl">
-          <p className="text-xs text-[#6b6b7a] mb-2">{label}</p>
-          <p className="text-lg font-bold text-white mb-1">
-            {formatFullCurrency(dataPoint.netWorth)}
-          </p>
-          <div className="text-xs text-[#6b6b7a] space-y-1">
-            <p>Assets: {formatCurrency(dataPoint.assetsMin)} - {formatCurrency(dataPoint.assetsMax)}</p>
-            <p>Liabilities: {formatCurrency(dataPoint.liabilitiesMin)} - {formatCurrency(dataPoint.liabilitiesMax)}</p>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
 
   if (loading) {
     return (

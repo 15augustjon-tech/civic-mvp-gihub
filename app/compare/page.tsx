@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   ArrowLeft,
   Users,
@@ -16,10 +17,107 @@ import {
   AlertTriangle,
   CheckCircle2,
   XCircle,
-  Minus
 } from 'lucide-react';
 import { fetchSenators, Senator } from '@/lib/data';
 import { cn } from '@/lib/utils';
+
+// Helper functions defined outside component
+function getPartyColor(party: string) {
+  if (party === 'D') return 'bg-blue-500';
+  if (party === 'R') return 'bg-red-500';
+  return 'bg-purple-500';
+}
+
+function getPartyText(party: string) {
+  if (party === 'D') return 'Democrat';
+  if (party === 'R') return 'Republican';
+  return 'Independent';
+}
+
+// SenatorSelector component moved outside
+function SenatorSelector({
+  senators,
+  selected,
+  onSelect,
+  isOpen,
+  setIsOpen,
+  otherSenator,
+  label
+}: {
+  senators: Senator[];
+  selected: Senator | null;
+  onSelect: (s: Senator) => void;
+  isOpen: boolean;
+  setIsOpen: (v: boolean) => void;
+  otherSenator: Senator | null;
+  label: string;
+}) {
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          'w-full p-4 rounded-xl border transition-all flex items-center gap-4',
+          selected
+            ? 'bg-white/[0.04] border-white/[0.08]'
+            : 'bg-white/[0.02] border-white/[0.04] border-dashed'
+        )}
+      >
+        {selected ? (
+          <>
+            <Image
+              src={selected.photo}
+              alt={selected.name}
+              width={48}
+              height={48}
+              className="w-12 h-12 rounded-full object-cover border border-white/10"
+              unoptimized
+            />
+            <div className="flex-1 text-left">
+              <p className="font-medium text-white">{selected.name}</p>
+              <p className="text-sm text-[#6b6b7a]">{selected.state} • {getPartyText(selected.party)}</p>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 text-left">
+            <p className="text-[#6b6b7a]">Select {label}</p>
+          </div>
+        )}
+        <ChevronDown className={cn('w-5 h-5 text-[#6b6b7a] transition-transform', isOpen && 'rotate-180')} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-2 max-h-80 overflow-auto rounded-xl bg-[#0a0a0f] border border-white/[0.08] shadow-xl">
+          {senators
+            .filter(s => s.id !== otherSenator?.id)
+            .map(senator => (
+              <button
+                key={senator.id}
+                onClick={() => {
+                  onSelect(senator);
+                  setIsOpen(false);
+                }}
+                className="w-full p-3 flex items-center gap-3 hover:bg-white/[0.04] transition-colors border-b border-white/[0.04] last:border-0"
+              >
+                <Image
+                  src={senator.photo}
+                  alt={senator.name}
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 rounded-full object-cover"
+                  unoptimized
+                />
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-medium text-white">{senator.name}</p>
+                  <p className="text-xs text-[#6b6b7a]">{senator.stateAbbr} • {senator.party}</p>
+                </div>
+              </button>
+            ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function CompareContent() {
   const searchParams = useSearchParams();
@@ -55,18 +153,6 @@ function CompareContent() {
       });
   }, [searchParams]);
 
-  const getPartyColor = (party: string) => {
-    if (party === 'D') return 'bg-blue-500';
-    if (party === 'R') return 'bg-red-500';
-    return 'bg-purple-500';
-  };
-
-  const getPartyText = (party: string) => {
-    if (party === 'D') return 'Democrat';
-    if (party === 'R') return 'Republican';
-    return 'Independent';
-  };
-
   const compareValue = (a: number, b: number, higherIsBetter = true) => {
     if (a === b) return { a: 'neutral', b: 'neutral' };
     if (higherIsBetter) {
@@ -74,92 +160,6 @@ function CompareContent() {
     }
     return { a: a < b ? 'better' : 'worse', b: b < a ? 'better' : 'worse' };
   };
-
-  const getStatusIcon = (status: string) => {
-    if (status === 'better') return <CheckCircle2 className="w-4 h-4 text-green-400" />;
-    if (status === 'worse') return <XCircle className="w-4 h-4 text-red-400" />;
-    return <Minus className="w-4 h-4 text-[#6b6b7a]" />;
-  };
-
-  const SenatorSelector = ({
-    selected,
-    onSelect,
-    isOpen,
-    setIsOpen,
-    otherSenator,
-    label
-  }: {
-    selected: Senator | null;
-    onSelect: (s: Senator) => void;
-    isOpen: boolean;
-    setIsOpen: (v: boolean) => void;
-    otherSenator: Senator | null;
-    label: string;
-  }) => (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          'w-full p-4 rounded-xl border transition-all flex items-center gap-4',
-          selected
-            ? 'bg-white/[0.04] border-white/[0.08]'
-            : 'bg-white/[0.02] border-white/[0.04] border-dashed'
-        )}
-      >
-        {selected ? (
-          <>
-            <img
-              src={selected.photo}
-              alt={selected.name}
-              className="w-12 h-12 rounded-full object-cover border border-white/10"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/placeholder-senator.png';
-              }}
-            />
-            <div className="flex-1 text-left">
-              <p className="font-medium text-white">{selected.name}</p>
-              <p className="text-sm text-[#6b6b7a]">{selected.state} • {getPartyText(selected.party)}</p>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 text-left">
-            <p className="text-[#6b6b7a]">Select {label}</p>
-          </div>
-        )}
-        <ChevronDown className={cn('w-5 h-5 text-[#6b6b7a] transition-transform', isOpen && 'rotate-180')} />
-      </button>
-
-      {isOpen && (
-        <div className="absolute z-50 w-full mt-2 max-h-80 overflow-auto rounded-xl bg-[#0a0a0f] border border-white/[0.08] shadow-xl">
-          {senators
-            .filter(s => s.id !== otherSenator?.id)
-            .map(senator => (
-              <button
-                key={senator.id}
-                onClick={() => {
-                  onSelect(senator);
-                  setIsOpen(false);
-                }}
-                className="w-full p-3 flex items-center gap-3 hover:bg-white/[0.04] transition-colors border-b border-white/[0.04] last:border-0"
-              >
-                <img
-                  src={senator.photo}
-                  alt={senator.name}
-                  className="w-10 h-10 rounded-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/placeholder-senator.png';
-                  }}
-                />
-                <div className="flex-1 text-left">
-                  <p className="text-sm font-medium text-white">{senator.name}</p>
-                  <p className="text-xs text-[#6b6b7a]">{senator.stateAbbr} • {senator.party}</p>
-                </div>
-              </button>
-            ))}
-        </div>
-      )}
-    </div>
-  );
 
   const currentYear = new Date().getFullYear();
 
@@ -210,6 +210,7 @@ function CompareContent() {
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
             <SenatorSelector
+              senators={senators}
               selected={senatorA}
               onSelect={setSenatorA}
               isOpen={dropdownA}
@@ -218,6 +219,7 @@ function CompareContent() {
               label="Senator A"
             />
             <SenatorSelector
+              senators={senators}
               selected={senatorB}
               onSelect={setSenatorB}
               isOpen={dropdownB}
@@ -241,13 +243,13 @@ function CompareContent() {
           <div className="flex justify-center items-center gap-8 mb-12">
             <Link href={`/politician/${senatorA.id}`} className="text-center group">
               <div className="relative inline-block">
-                <img
+                <Image
                   src={senatorA.photo}
                   alt={senatorA.name}
+                  width={128}
+                  height={128}
                   className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white/10 group-hover:border-blue-500/50 transition-colors"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/placeholder-senator.png';
-                  }}
+                  unoptimized
                 />
                 <div className={cn(
                   'absolute -bottom-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center border-4 border-[#050508]',
@@ -264,13 +266,13 @@ function CompareContent() {
 
             <Link href={`/politician/${senatorB.id}`} className="text-center group">
               <div className="relative inline-block">
-                <img
+                <Image
                   src={senatorB.photo}
                   alt={senatorB.name}
+                  width={128}
+                  height={128}
                   className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white/10 group-hover:border-blue-500/50 transition-colors"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/placeholder-senator.png';
-                  }}
+                  unoptimized
                 />
                 <div className={cn(
                   'absolute -bottom-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center border-4 border-[#050508]',
